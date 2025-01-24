@@ -16,7 +16,7 @@ def show_intro():
 |   | /    \\   __\/  _ \   |    |  \ |  | /  ___/_/ ___\ 
 |   ||   |  \|  | (  <_> )  |    `   \|  | \___ \ \  \___ 
 |___||___|  /|__|  \____/  /_______  /|__|/____  > \___  >
-          \/                       \/          \/      \/ 33                                                  
+          \/                       \/          \/      \/      <33                                                  
     ''')
     print(Fore.GREEN + Style.BRIGHT + "Version: dev-alpha-1.0\n" + Style.RESET_ALL)
     print("Created by: " + Fore.RED, Style.BRIGHT + "X3r0Day" + Style.RESET_ALL)
