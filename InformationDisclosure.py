@@ -1,53 +1,11 @@
 import subprocess
 import time
 import os
+import json
 from colorama import Fore, Style
 
 f_check = False
 f_type = []
-
-def execute_command(command):
-    """
-    Executes a shell command and captures the output.
-    Returns stdout if successful, or stderr if there is an error.
-    """
-    try:
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        return f"Error: {e.stderr}"
-
-
-def basic_query(url):
-    """
-    Executes a basic query for the given URL using the Wayback Machine CDX API.
-    """
-    command = f"""
-    curl -G "https://web.archive.org/cdx/search/cdx" \
-    --data-urlencode "url={url}/*" \
-    --data-urlencode "collapse=urlkey" \
-    --data-urlencode "output=text" \
-    --data-urlencode "fl=original"
-    """
-    return execute_command(command)
-
-
-def filtered_query(url, extensions):
-    """
-    Executes a filtered query for the given URL and file extensions using the Wayback Machine CDX API.
-    """
-    command = f"""
-    curl "https://web.archive.org/cdx/search/cdx?url={url}/*&collapse=urlkey&output=text&fl=original&filter=original:.*\\.({extensions})$" | tee output.txt
-    """
-    return execute_command(command)
-
-
-def files_type():
-    global f_type
-    f_type = input("Enter the file type: (e.g. pdf|txt|xml or txt)\n> ").split("|")
-    global f_check
-    f_check = True
-
 
 def show_intro():
     os.system("clear" if os.name != "nt" else "cls")
@@ -65,65 +23,88 @@ def show_intro():
     print(Fore.YELLOW + "\nA tool to query and analyze archived data from the Wayback Machine.\n" + Style.RESET_ALL)
     time.sleep(2)
 
+def execute_command(command):
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        return f"Error: {e.stderr}"
 
-def main():
-    global f_check
-    global f_type
+def basic_query(url):
+    command = f"""
+    curl -G "https://web.archive.org/cdx/search/cdx" \
+    --data-urlencode "url={url}/*" \
+    --data-urlencode "collapse=urlkey" \
+    --data-urlencode "output=text" \
+    --data-urlencode "fl=original"
+    """
+    return execute_command(command)
 
-    show_intro()
+def load_extensions(filename='file_extensions.json'):
+    try:
+        with open(filename, 'r') as f:
+            data = json.load(f)
+            return data.get("extensions", [])
+    except Exception as e:
+        print(Fore.RED + f"Error reading JSON file: {e}")
+        return []
 
+def filter_files(query_result, extensions):
+    filtered_lines = []
+    for line in query_result.splitlines():
+        if any(ext in line for ext in extensions):
+            filtered_lines.append(line)
+    return "\n".join(filtered_lines)
+
+def save_to_file(content, filename='output.txt'):
+    with open(filename, 'w') as f:
+        f.write(content)
+    print(Fore.GREEN + f"Results saved to {filename}.")
+
+def menu():
+    show_intro()  # Show the intro when the program starts
+    extensions = []
+    
     while True:
-        print("\n*** Information Disclosure Tool ***\n")
-        print("1. Basic Query: Fetch all URLs for a given site.")
-        print("2. Filtered Query: Fetch URLs for specific file types (e.g., pdf, json, xlsx).")
-        print("3. Enter file type you want to search for.")
-        print("4. Exit.")
+        os.system('clear')  # For Linux and macOS, 'cls' for Windows
+        print(Fore.CYAN + Style.BRIGHT + "===== Menu =====")
+        print("1. Execute Basic Query")
+        print("2. Load Filter Extensions from JSON")
+        print("3. Exit")
         
-        choice = input("\nChoose an option (1, 2, 3, or 4): ").strip()
+        choice = input(Fore.YELLOW + "Choose an option: ")
 
-        if choice == "4":
-            print("Exiting the program.")
+        if choice == '1':
+            url = input(Fore.GREEN + "Enter URL to query: ")
+            result = basic_query(url)
+            
+            if extensions:
+                result = filter_files(result, extensions)
+                print(Fore.GREEN + f"Filtered Result (extensions: {', '.join(extensions)}):\n")
+            else:
+                print(Fore.GREEN + "Result:\n")
+            
+            print(result)
+            save_to_file(result)  # Save the filtered result to output.txt
+            input(Fore.MAGENTA + "Press Enter to continue...")
+
+        elif choice == '2':
+            # Load file extensions from JSON file
+            extensions = load_extensions()
+            if extensions:
+                print(Fore.GREEN + f"Loaded extensions: {', '.join(extensions)}")
+            else:
+                print(Fore.RED + "Failed to load extensions.")
+            input(Fore.MAGENTA + "Press Enter to continue...")
+
+        elif choice == '3':
+            print(Fore.RED + "Exiting...")
+            time.sleep(1)
             break
 
-        if choice not in ["1", "2", "3"]:
-            print("Invalid choice. Please try again.")
-            continue
-
-        if choice == "3":
-            files_type()
-            continue # This thing took me time to fix 😭 I wasn't able to make it run files_type function lmfao
-
-        url = input("\nEnter the site (e.g., example.com): ").strip()
-        if not url:
-            print("URL cannot be empty. Please try again.")
-            continue
-
-        if choice == "1":
-            print("\nExecuting Basic Query...\n")
-            output = basic_query(url)
-
-        elif choice == "2":
-            if f_check:
-                extensions = f_type
-            else:
-                extensions = [
-                    "xls", "xml", "xlsx", "json", "pdf", "sql", "doc", "docx", "pptx", "txt",
-                    "git", "zip", "tar.gz", "tgz", "bak", "7z", "rar", "log", "cache", "secret",
-                    "db", "backup", "yml", "gz", "config", "csv", "yaml", "md", "md5", "exe",
-                    "dll", "bin", "ini", "bat", "sh", "tar", "deb", "rpm", "iso", "img", "env",
-                    "apk", "msi", "dmg", "tmp", "crt", "pem", "key", "pub", "asc"
-                ]
-            print("\nExecuting Filtered Query...\n")
-            output = filtered_query(url, extensions)
-
-        output_file = "output.txt"
-        with open(output_file, "w") as file:
-            file.write(output)
-
-        print(f"\nQuery results have been saved to '{output_file}'.\n")
-        print("Output Preview:\n")
-        print(output)
-
+        else:
+            print(Fore.RED + "Invalid choice, please try again.")
+            time.sleep(1)
 
 if __name__ == "__main__":
-    main()
+    menu()
