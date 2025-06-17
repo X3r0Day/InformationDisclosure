@@ -20,7 +20,7 @@ You can find files which contains keyword "Confidential" if the file extension i
 
 ## Installation
 
-### Dependecy:
+### Dependency/Software
 
 `colorama`
 `python 3.8+`
