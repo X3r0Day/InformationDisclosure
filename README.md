@@ -28,7 +28,8 @@ You can find files which contains keyword "Confidential" if the file extension i
 ### Installing:
 
 ```
-git clone https://github.com/X3r0Day/InformationDisclosure.git && cd InformationDisclosure
+git clone https://github.com/X3r0Day/InformationDisclosure.git
+cd InformationDisclosure
 python3 InformationDisclosure.py
 ```
 
@@ -36,7 +37,7 @@ python3 InformationDisclosure.py
 
 ## Configuration 
 
-You can add custom file extension which you want to also include in scraped data in file_extensions.json
+You can add custom file extension which you want to also include in scraped data in [`file_extensions.json`](https://github.com/X3r0Day/InformationDisclosure/blob/main/file_extensions.json)
 
 
 ---
