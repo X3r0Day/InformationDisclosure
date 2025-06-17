@@ -14,8 +14,6 @@ A tool to dig up the past for publicly available data... because why wait for se
 
 Uses `CDX` API of Web Archive to get files and then filter out unnecessary ones
 
-You can find files which contains keyword "Confidential" if the file extension is under [`file_extensions.json`](https://github.com/X3r0Day/InformationDisclosure/blob/main/file_extensions.json)
-
 ---
 
 ## Installation
