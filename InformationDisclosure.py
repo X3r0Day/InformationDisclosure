@@ -30,13 +30,15 @@ def execute_command(command):
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
 
-def basic_query(url):
+def basic_query(url, limit=5000):
     command = f"""
     curl -G "https://web.archive.org/cdx/search/cdx" \
+    --http1.1 \
     --data-urlencode "url={url}/*" \
     --data-urlencode "collapse=urlkey" \
     --data-urlencode "output=text" \
-    --data-urlencode "fl=original"
+    --data-urlencode "fl=original" \
+    --data-urlencode "limit={limit}"
     """
     return execute_command(command)
 
@@ -66,17 +68,25 @@ def menu():
     extensions = []
     
     while True:
-        os.system('clear')  # For Linux and macOS, 'cls' for Windows
+        os.system('clear')  # fuck windows who cares
+        show_intro()
         print(Fore.CYAN + Style.BRIGHT + "===== Menu =====")
         print("1. Execute Basic Query")
         print("2. Load Filter Extensions from JSON")
         print("3. Exit")
+        print(Fore.CYAN + Style.BRIGHT + "===== Menu =====")
         
         choice = input(Fore.YELLOW + "Choose an option: ")
 
         if choice == '1':
             url = input(Fore.GREEN + "Enter URL to query: ")
-            result = basic_query(url)
+            limit = int(input("Enter search result limit (default: 5000): ") or 5000)
+
+            if limit >= 10000:
+                 print("Note: This tool may take time to finish (7-10mins [depends]) to complete scan!")
+
+
+            result = basic_query(url, limit)
             
             if extensions:
                 result = filter_files(result, extensions)
