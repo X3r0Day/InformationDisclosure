@@ -50,6 +50,8 @@ It uses `CDX` api of [Web Archive](http://web.archive.org/) to filter out unnece
 
 #### This tool is for educational/research purposes only. Use it responsibly and don’t break the internet. I’m not responsible for any harm!
 
+#### You may see garbage output in starting of `output.txt` file because that's how Archive have saved some urls.. but soon after you will only get the filtered urls. Didn't felt the need to add filter for garbage so.. ehh.
+
 ---
 
 ### Inspiration took from [LostSec](https://www.youtube.com/@lostsecc)
