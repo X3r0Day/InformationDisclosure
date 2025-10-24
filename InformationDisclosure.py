@@ -19,7 +19,7 @@ def show_intro():
 |___||___|  /|__|  \____/  /_______  /|__|/____  > \___  >
           \/                       \/          \/      \/      <33                                                  
     ''')
-    print(Fore.GREEN + Style.BRIGHT + "Version: dev-alpha-1.0\n" + Style.RESET_ALL)
+    print(Fore.GREEN + Style.BRIGHT + "Version: dev-alpha-2.2\n" + Style.RESET_ALL)
     print("Created by: " + Fore.RED, Style.BRIGHT + "X3r0Day" + Style.RESET_ALL)
     print(Fore.YELLOW + "\nA tool to query and analyze archived data from the Wayback Machine.\n" + Style.RESET_ALL)
     # time.sleep(2)
