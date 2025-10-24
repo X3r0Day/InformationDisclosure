@@ -3,6 +3,7 @@ import time
 import os
 import json
 from colorama import Fore, Style
+from split import split_by_extension
 
 f_check = False
 f_type = []
@@ -21,7 +22,7 @@ def show_intro():
     print(Fore.GREEN + Style.BRIGHT + "Version: dev-alpha-1.0\n" + Style.RESET_ALL)
     print("Created by: " + Fore.RED, Style.BRIGHT + "X3r0Day" + Style.RESET_ALL)
     print(Fore.YELLOW + "\nA tool to query and analyze archived data from the Wayback Machine.\n" + Style.RESET_ALL)
-    time.sleep(2)
+    # time.sleep(2)
 
 def execute_command(command):
     try:
@@ -73,7 +74,8 @@ def menu():
         print(Fore.CYAN + Style.BRIGHT + "===== Menu =====")
         print("1. Execute Basic Query")
         print("2. Load Filter Extensions from JSON")
-        print("3. Exit")
+        print("3. Filter out output.txt")
+        print("4. Exit")
         print(Fore.CYAN + Style.BRIGHT + "===== Menu =====")
         
         choice = input(Fore.YELLOW + "Choose an option: ")
@@ -96,7 +98,16 @@ def menu():
             
             print(result)
             save_to_file(result)  # Save the filtered result to output.txt
-            input(Fore.MAGENTA + "Press Enter to continue...")
+            
+            sort = input("Do you want to sort the files into respect extension files? y/N: ").lower()
+            if sort == "y":
+                split_by_extension("output.txt")
+                #input(Fore.MAGENTA + "Press ENTER to continue...")
+                break
+            else:
+                break
+                    
+            input(Fore.MAGENTA + "Press ENTER to continue...")
 
         elif choice == '2':
             # Load file extensions from JSON file
@@ -105,16 +116,19 @@ def menu():
                 print(Fore.GREEN + f"Loaded extensions: {', '.join(extensions)}")
             else:
                 print(Fore.RED + "Failed to load extensions.")
-            input(Fore.MAGENTA + "Press Enter to continue...")
+            input(Fore.MAGENTA + "Press ENTER to continue...")
 
-        elif choice == '3':
+        elif choice == '4':
             print(Fore.RED + "Exiting...")
             time.sleep(1)
             break
 
+        elif choice == '3':
+            split_by_extension("output.txt")
+            input(Fore.MAGENTA + "Press ENTER to continue...")
+
         else:
-            print(Fore.RED + "Invalid choice, please try again.")
-            time.sleep(1)
+            time.sleep(0.3)
 
 if __name__ == "__main__":
     menu()
